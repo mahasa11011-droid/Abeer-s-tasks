@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قائمة تجهيزات الحفلة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf6f1;--card:#fff;--ink:#2b2420;--mute:#8a7e75;--line:#ece4da;--acc:#b5835a;--ok:#5b8c5a;--pin:#c0573e}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1917;--card:#26221f;--ink:#f3ede7;--mute:#a59a90;--line:#38322d;--acc:#d4a273;--ok:#86b784;--pin:#e07a62}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tajawal,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:640px;margin:0 auto;padding:18px 14px 60px}
+h1{font-size:24px;font-weight:800;margin:4px 0 2px}
+.sub{color:var(--mute);font-size:14px;margin-bottom:14px}
+.bar{background:var(--line);height:10px;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .4s}
+.prog{display:flex;justify-content:space-between;font-size:14px;color:var(--mute);margin:6px 0 14px}
+.me{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:12px}
+.me label{font-size:14px;color:var(--mute);white-space:nowrap}
+.me input{flex:1;border:none;background:transparent;font:inherit;font-size:16px;color:var(--ink);outline:none;min-width:0}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:6px 13px;font:inherit;font-size:14px;cursor:pointer}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.sec{margin-top:18px}
+.sec h2{font-size:16px;font-weight:700;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.sec h2 small{color:var(--mute);font-weight:500;font-size:13px}
+.item{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;cursor:pointer;user-select:none;transition:opacity .2s}
+.box{flex:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;margin-top:1px;transition:all .15s}
+.item.done .box{background:var(--ok);border-color:var(--ok)}
+.box svg{width:16px;height:16px;opacity:0}
+.item.done .box svg{opacity:1}
+.txt{flex:1;min-width:0}
+.t{font-size:16px;line-height:1.45}
+.item.done .t{text-decoration:line-through;color:var(--mute)}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;font-size:12.5px}
+.who{background:color-mix(in srgb,var(--acc) 15%,transparent);color:var(--acc);padding:2px 8px;border-radius:99px;font-weight:700}
+.pin{background:color-mix(in srgb,var(--pin) 14%,transparent);color:var(--pin);padding:2px 8px;border-radius:99px;font-weight:700}
+.by{color:var(--ok)}
+.status{font-size:13px;color:var(--mute);text-align:center;margin:10px 0}
+.status.err{color:var(--pin)}
+.empty{color:var(--mute);text-align:center;padding:20px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎉 تجهيزات الحفلة</h1>
+  <div class="sub">اضغطي على أي مهمة لما تخلص — التشيك يظهر للكل</div>
+  <div class="bar"><i id="pbar"></i></div>
+  <div class="prog"><span id="ptxt">0 من 0</span><span id="ppct">0%</span></div>
+  <div class="me"><label>اسمك:</label><input id="name" placeholder="اكتبي اسمك عشان يظهر مين حطت التشيك" maxlength="20"></div>
+  <div class="chips" id="chips"></div>
+  <div id="status" class="status">جاري التحميل…</div>
+  <div id="list"></div>
+</div>
+<script>
+const SECTIONS=[
+ {t:"🎲 الألعاب والمسابقات",items:[
+  ["g1","لعبة الصور (كل صورة لها اسم رجل وأسئلة) — إرسال الصور لفريحة",["عبير"]],
+  ["g2","فعالية +٣٠",["أمول"]],
+  ["g3","مسابقة خمّن المقاس (طلبت لها فواكه)",["أمول"]],
+  ["g4","هدية مسابقة الضفادع",[],1],
+  ["g5","لعبة طلّع صوت +٢٠ للحركة، والعروسة تقيّم",["فريحة"]],
+  ["g6","احتياجات الألعاب: بالونات، خيط صوف، أقلام للعلبة دخله، أكواب ورق بفتحات بمقاس القلم — مين يوفرها؟",[],1],
+  ["g7","مسابقة الأسئلة — نزيد عليها",["عبير","فريحة"]],
+  ["g8","سينما بريء لكن مو بريء",["فريحة"]],
+  ["g9","تجهيز السماعة",["أمول"]]]},
+ {t:"🍰 الأكل والضيافة",items:[
+  ["f1","كيكة الحمار الوحشي — طلبها",["لوش"]],
+  ["f2","تغريسة الكيكة",["ميم","فريحة"]],
+  ["f3","المكسرات والسوادي",["لوش"]],
+  ["f4","صحون سوداء للمكسرات",["ميم"]],
+  ["f5","طلب العشاء يوم الحفلة",["لوش"]],
+  ["f6","التراميسو — تطلبه وتجيبه معها",["هواوي"]],
+  ["f7","المشروبات — تطلبها الأربعاء من بيت أمول",["لوش"]],
+  ["f8","علبة العصير — عبير ولا ميم؟",[],1]]},
+ {t:"☕ الأدوات والتجهيزات",items:[
+  ["d1","أكواب ورق سوداء للقهوة",[],1],
+  ["d2","ملاعق ذهبية",["ميم"]],
+  ["d3","أكواب شفافة للعشاء",["ميم"]],
+  ["d4","سجادة القهوة الحمراء",["ميم"]],
+  ["d5","آلة القهوة بلوم",["ميم"]],
+  ["d6","لوحة لركن القهوة",["عبير"]],
+  ["d7","فازات للورد",[],1],
+  ["d8","صندوق لقطع الملابس",[],1],
+  ["d9","صحن للملصقات",[],1]]},
+ {t:"👰 العروسة",items:[
+  ["b1","بجامة العروسة — تغسلها وتسلميم لها",["ميم"]]]},
+ {t:"🖨️ الطباعة والتنظيم",items:[
+  ["p1","طباعة الورقة (قبل العروسة)",[],1],
+  ["p2","جدول اليوم وطباعته",["عبير","فريحة"]]]},
+ {t:"🚗 يوم الأربعاء",items:[
+  ["w1","السواق يوصل عبير ولوش لبيت أمول ويرجعهم",["عبير","لوش"]],
+  ["w2","تجهيز الأغراض عشان تنأخذ معهم",["هواوي"]]]}
+];
+const PEOPLE=["الكل","عبير","ميم","فريحة","لوش","أمول","هواوي","📍 بدون مسؤولة"];
+let filter="الكل", checks={}, db=null, live=false;
+const $=id=>document.getElementById(id);
+const nameEl=$("name");
+try{nameEl.value=localStorage.getItem("pname")||""}catch(e){}
+nameEl.addEventListener("input",()=>{try{localStorage.setItem("pname",nameEl.value.trim())}catch(e){}});
+
+function chips(){
+  $("chips").innerHTML=PEOPLE.map(p=>`<button class="chip${p===filter?" on":""}" data-p="${p}">${p}</button>`).join("");
+}
+$("chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;filter=b.dataset.p;chips();render();});
+
+function match(it){
+  if(filter==="الكل")return true;
+  if(filter.startsWith("📍"))return !!it[3];
+  return it[2].includes(filter);
+}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+function render(){
+  let total=0,done=0,html="";
+  SECTIONS.forEach(s=>s.items.forEach(it=>{total++;if(checks[it[0]]?.done)done++;}));
+  $("pbar").style.width=(total?done/total*100:0)+"%";
+  $("ptxt").textContent=`${done} من ${total} خلصت`;
+  $("ppct").textContent=Math.round(total?done/total*100:0)+"%";
+  SECTIONS.forEach(s=>{
+    const its=s.items.filter(match); if(!its.length)return;
+    const d=its.filter(i=>checks[i[0]]?.done).length;
+    html+=`<div class="sec"><h2>${s.t}<small>${d}/${its.length}</small></h2>`;
+    its.forEach(it=>{
+      const c=checks[it[0]]; const isDone=!!c?.done;
+      const tags=it[2].map(p=>`<span class="who">${p}</span>`).join("")+(it[3]?'<span class="pin">📍 تحتاج مسؤولة</span>':"");
+      const by=isDone&&c.by?`<span class="by">✓ ${esc(c.by)}</span>`:"";
+      html+=`<div class="item${isDone?" done":""}" data-id="${it[0]}"><div class="box">${CHECK}</div><div class="txt"><div class="t">${it[1]}</div><div class="meta">${tags}${by}</div></div></div>`;
+    });
+    html+="</div>";
+  });
+  $("list").innerHTML=html||'<div class="empty">ما فيه ميمم هنا</div>';
+}
+
+$("list").addEventListener("click",async e=>{
+  const el=e.target.closest(".item"); if(!el)return;
+  const id=el.dataset.id;
+  if(!live){setStatus("القائمة مو متصلة — التشيك ما راح ينحفظ",true);return;}
+  const nm=nameEl.value.trim();
+  const now=!checks[id]?.done;
+  const prev=checks[id];
+  checks[id]={done:now,by:now?nm:""};
+  render();
+  try{
+    await db.collection("checks").doc(id).set({done:now,by:now?nm:"",at:Date.now()});
+  }catch(err){
+    checks[id]=prev; render();
+    setStatus("ما قدرت أحفظ التشيك — تأكدي إن عندك صلاحية تعديل",true);
+  }
+});
+
+function setStatus(t,err){const s=$("status");s.textContent=t;s.className="status"+(err?" err":"");s.style.display=t?"block":"none";}
+
+chips();render();
+(async()=>{
+  const timer=setTimeout(()=>{if(!live)setStatus("ما قدرت أتصل بالقائمة المشتركة — سجلي دخول في Claude وحدّثي الصفحة",true)},10000);
+  try{
+    db=await claude.use("db");
+    if(!db){clearTimeout(timer);setStatus("سجلي دخول في Claude عشان تقدرين تحطين تشيك",true);return;}
+    db.collection("checks").onSnapshot(snap=>{
+      live=true;
+      if(!snap.metadata.fromCache){clearTimeout(timer);setStatus("");}
+      const next={};
+      snap.docs.forEach(d=>{if(d.exists)next[d.id]=d.data();});
+      checks=next; render();
+    },err=>{clearTimeout(timer);setStatus("صار خطأ في تحميل القائمة",true);});
+  }catch(e){clearTimeout(timer);setStatus("صار خطأ في الاتصال",true);}
+})();
+</script>
+</body>
+</html>
